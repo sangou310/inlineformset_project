@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from .models import Customer, Part
+from .models import Customer, Part, JutyuHead
 
 admin.site.register(Customer)
 admin.site.register(Part)
+admin.site.register(JutyuHead)

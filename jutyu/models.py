@@ -24,5 +24,6 @@ class JutyuHead(models.Model):
 
 
 class JutyuDetail(models.Model):
+    jutyu_head = models.ForeignKey(JutyuHead, models.CASCADE)
     part = models.ForeignKey(Part, models.CASCADE, verbose_name='部品')
     quantity = models.IntegerField('受注数量')

@@ -1,0 +1,50 @@
+{% extends 'jutyu/_base.html' %}
+
+{% block content %}
+    <h1>受注入力</h1>
+    <form action="" method="POST">
+        {{ form }}
+        <hr>
+        {{ formset.management_form }}
+        <div id="detail-area">
+            {% for detail in formset %}
+                {{ detail.as_table }}
+                <br>
+            {% endfor %}
+        </div>
+        {% csrf_token %}
+        <button class="btn btn-outline-primary" type="button" id="addForm">行を追加</button>
+        <button class="btn btn-primary" type="submit">保存</button>
+    </form>
+{% endblock content %}
+
+{% block extrajs %}
+    <script>
+        jQuery(function ($) {
+            // 1. インラインフォームセットに含まれるフォームの数を取得（＝TOTAL_FORMSのvalueを取得）
+            var totalManageElement = $("input#id_jutyudetail_set-TOTAL_FORMS");
+            var currentJutyuDetailCount = parseInt(totalManageElement.val());
+
+            $("button#addForm").on("click", function () {
+                // 2.
+                var newForm = "{{ form_skelton|escapejs }}";
+                /*
+                newForm.replace(/\d/g, currentJutyuDetailCount)
+                alert(newForm);
+                $(newForm).appendTo("div#detail-area");
+                 */
+                var partElement = $("<select></select>", {
+                        name: "jutyudetail_set-" + currentJutyuDetailCount + "-part",
+                        id: "id_jutyudetail_set-" + currentJutyuDetailCount + "-part",
+                        option: {
+                            "": "---------",
+                            "1": "111-222 / ステンレス継手",
+                            "2": "333-444 / Oリング",
+                        }
+                    }
+                );
+                $(partElement).appendTo("div#detail-area");
+            });
+        });
+    </script>
+{% endblock extrajs %}
