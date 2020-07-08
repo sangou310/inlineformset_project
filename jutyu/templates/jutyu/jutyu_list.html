@@ -2,22 +2,23 @@
 
 {% block content %}
     <h1>受注一覧</h1>
-    <a href="{% url 'add_jutyu' %}">受注入力</a>
+    <a href="{% url 'add_jutyu' %}">+ 受注入力</a>
     <table class="table">
-        <thead>
-        <tr>
-            <th>受注日付</th>
-            <th>顧客</th>
-        </tr>
-        </thead>
-        <tbody>
         {% for jutyuhead in jutyuhead_list %}
-            <tr>
-                <td>{{ jutyuhead.jutyu_date|date:'Y-m-d' }}</td>
-                <td>{{ jutyuhead.customer }}</td>
-            </tr>
+            {% for jutyudetail in jutyuhead.jutyudetail_set.all %}
+                <tr>
+                    {% if forloop.first %}
+                        <th>{{ jutyuhead.jutyu_date|date:'Y-m-d' }}</th>
+                        <th>{{ jutyuhead.customer }}</th>
+                    {% else %}
+                        <th></th>
+                        <th></th>
+                    {% endif %}
+                    <td>{{ jutyudetail.part }}</td>
+                    <td>{{ jutyudetail.quantity }}</td>
+                </tr>
+            {% endfor %}
         {% endfor %}
-        </tbody>
     </table>
     <p>{{ jutyuhead_list.count }} 件</p>
 {% endblock content %}

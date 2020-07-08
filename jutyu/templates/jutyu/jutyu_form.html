@@ -2,19 +2,27 @@
 
 {% block content %}
     <h1>受注入力</h1>
+
     <form action="" method="POST">
         {{ form }}
         <hr>
         {{ formset.management_form }}
         <div id="detail-area">
-            {% for detail in formset %}
-                {{ detail.as_table }}
+            {% for detail_form in formset %}
+                {{ detail_form.as_table }}
                 <br>
             {% endfor %}
         </div>
+        <br>
         {% csrf_token %}
-        <button class="btn btn-outline-primary" type="button" id="addForm">行を追加</button>
-        <button class="btn btn-primary" type="submit">保存</button>
+        <div class="d-flex">
+            <div class="mr-auto">
+                <button class="btn btn-outline-primary" type="button" id="addForm">行を追加</button>
+            </div>
+            <div class="ml-auto">
+                <button class="btn btn-primary" type="submit">保存</button>
+            </div>
+        </div>
     </form>
 {% endblock content %}
 
@@ -25,25 +33,39 @@
             var totalManageElement = $("input#id_jutyudetail_set-TOTAL_FORMS");
             var currentJutyuDetailCount = parseInt(totalManageElement.val());
 
+            //「行を追加」ボタンが押されたときに
+            // ２．何番目かを表す数字を含んだidを付けて、各フィールドを追加する
             $("button#addForm").on("click", function () {
-                // 2.
-                var newForm = "{{ form_skelton|escapejs }}";
-                /*
-                newForm.replace(/\d/g, currentJutyuDetailCount)
-                alert(newForm);
-                $(newForm).appendTo("div#detail-area");
-                 */
-                var partElement = $("<select></select>", {
-                        name: "jutyudetail_set-" + currentJutyuDetailCount + "-part",
-                        id: "id_jutyudetail_set-" + currentJutyuDetailCount + "-part",
-                        option: {
-                            "": "---------",
-                            "1": "111-222 / ステンレス継手",
-                            "2": "333-444 / Oリング",
-                        }
-                    }
-                );
+                // 部品
+                var partElement = $("<select>", {
+                    name: "jutyudetail_set-" + currentJutyuDetailCount + "-part",
+                    id: "id_jutyudetail_set-" + currentJutyuDetailCount + "-part",
+                });
+                partElement.append($("<option>").html("---------").val(""));
+                {% for part in part_list %}
+                    partElement.append($("<option>").html("{{ part }}").val("{{ part.pk }}"));
+                {% endfor %}
+                // 受注数量
+                var quantityElement = $("<input>", {
+                    type: "number",
+                    name: "jutyudetail_set-" + currentJutyuDetailCount + "-quantity",
+                    id: "id_jutyudetail_set-" + currentJutyuDetailCount + "-quantity",
+                });
+                // 削除
+                var deleteElement = $("<input>", {
+                    type: "checkbox",
+                    name: "jutyudetail_set-" + currentJutyuDetailCount + "-DELETE",
+                    id: "id_jutyudetail_set-" + currentJutyuDetailCount + "-DELETE",
+                });
+                // 追加
                 $(partElement).appendTo("div#detail-area");
+                $(quantityElement).appendTo("div#detail-area");
+                $(deleteElement).appendTo("div#detail-area");
+                $("<br>").appendTo("div#detail-area");
+
+                // 3. TOTAL_FORMSを1増やす
+                currentJutyuDetailCount += 1
+                $("input#id_jutyudetail_set-TOTAL_FORMS").attr("value", currentJutyuDetailCount);
             });
         });
     </script>

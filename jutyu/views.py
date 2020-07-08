@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 from django.views.generic import ListView
 
 from .forms import JutyuCreateForm, JutyuDetailFormset
-from .models import JutyuHead, JutyuDetail
+from .models import JutyuHead, JutyuDetail, Part
 
 
 class JutyuListView(ListView):
@@ -25,6 +25,6 @@ def add_jutyu(request):
 
     else:
         context['formset'] = JutyuDetailFormset()
-        context['form_skelton'] = context['formset'][-1]
+        context['part_list'] = Part.objects.all()
 
     return render(request, 'jutyu/jutyu_form.html', context)
