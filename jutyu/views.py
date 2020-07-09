@@ -25,6 +25,5 @@ def add_jutyu(request):
 
     else:
         context['formset'] = JutyuDetailFormset()
-        context['part_list'] = Part.objects.all()
 
     return render(request, 'jutyu/jutyu_form.html', context)
