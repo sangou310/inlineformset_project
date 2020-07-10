@@ -41,21 +41,27 @@
 {% block extrajs %}
     <script>
         jQuery(function ($) {
-            // インラインフォームセットに含まれるフォームの数を取得（＝TOTAL_FORMSのvalueを取得）
-            var totalManageElement = $("input#id_jutyudetail_set-TOTAL_FORMS");
-            var currentJutyuDetailCount = parseInt(totalManageElement.val());
-
-            //「行を追加」ボタンが押されたとき
             $("button#addForm").on("click", function () {
-                $("table#detail-table tbody tr:first-child").clone().appendTo("table#detail-table tbody");
-                // id, nameの一部を書き換える
-                // ex. id_jutyudetail_set-0-part → id_jutyudetail_set-1-part
-                $("table#detail-table tbody tr:last-child [id])
-                // valueをクリアする
+                // インラインフォームセットに含まれるフォームの数を取得（＝TOTAL_FORMSのvalueを取得）
+                const totalManageElement = $("input#id_jutyudetail_set-TOTAL_FORMS");
+                const currentJutyuDetailCount = parseInt(totalManageElement.val());
 
+                // 最初の行をコピーして最下行に追加
+                $("table#detail-table tbody tr:first-child").clone().appendTo("table#detail-table tbody");
+                // 入力内容をクリアする
+                $("table#detail-table tbody tr:last-child").find("select, input").each(function () {
+                    // selectなのかinputなのか区別せずとにかくクリア（手抜き）
+                    $(this).val("");
+                    $(this).prop("selected", false);  // なくても選択解除されるが。。。
+                    $(this).prop("checked", false);
+                    // id, name を書き換える  ex. id_jutyudetail_set-0-part → id_jutyudetail_set-1-part
+                    var thisName = $(this).attr("name");
+                    thisName = thisName.replace("-0-", "-" + currentJutyuDetailCount + "-");
+                    $(this).attr("name", thisName);
+                    $(this).attr("id", "id_" + thisName);
+                })
                 // TOTAL_FORMSを1増やす
-                currentJutyuDetailCount += 1
-                $("input#id_jutyudetail_set-TOTAL_FORMS").attr("value", currentJutyuDetailCount);
+                $("input#id_jutyudetail_set-TOTAL_FORMS").attr("value", currentJutyuDetailCount + 1);
             });
         });
     </script>
